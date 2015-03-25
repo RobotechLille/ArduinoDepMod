@@ -22,10 +22,6 @@ public:
     ~Odometry();
 
 private:
-    Encoder encMesD;
-    Encoder encMesG;
-    Encoder encMotD;
-    Encoder encMotG;
     position _pos;    
 };
 

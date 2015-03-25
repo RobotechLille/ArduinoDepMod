@@ -6,7 +6,6 @@
 ========================================*/
 
     Odometry::Odometry()
-    : encMesD(), encMesG(), encMotD(), encMotG()
     {
         _pos.x = 0;
         _pos.y = 0;

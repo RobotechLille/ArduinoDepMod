@@ -1,5 +1,9 @@
 /*==========  Includes  ==========*/
 #include "main.hpp"
+#include "HardwareSerial.h"
+#include "Encoder.hpp"
+
+void printValue(signed long int value);
 
 int main (void)
 { 
@@ -160,20 +164,20 @@ int main (void)
     // RAZ temps
     time.reset();
 
-    // Allumage après 5 min         // OK
-    while(true)
-    {
-        if (time.ms() > 300000)
-        {
-            PORTB |= (1 << PB7);
-        }
-        else
-        {
-            PORTB &= ~(1 << PB7);
-        }
+    // // Allumage après 5 min         // OK
+    // while(true)
+    // {
+    //     if (time.ms() > 300000)
+    //     {
+    //         PORTB |= (1 << PB7);
+    //     }
+    //     else
+    //     {
+    //         PORTB &= ~(1 << PB7);
+    //     }
 
-        _delay_ms(1);
-    }
+    //     _delay_ms(1);
+    // }
 
     // Ou changement toutes les 5s  // OK 
     while(true)
@@ -190,21 +194,184 @@ int main (void)
         _delay_ms(1);
     }*/
 
-    /*==========  Test USART  ==========*/
+    /*==========  Test USART 01 ==========*/          // Bugguy with higher level bits
 
-    USART_Init();
+ //    USART_Init();
+ //    DDRB |= (1 << PB7);
+
+ //    int cpt = 0;
+ //    while(true)
+ //    {
+ //        // Serial transmission
+ //        PORTB |= (1 << PB7);
+ //        _delay_ms(100);   
+ //        USART_Transmit(cpt);
+ //        if(cpt++ > 0xFF)
+ //            cpt=0;  
+ //        // USART_Transmit(0x00);
+ //        // USART_Transmit(0x01);
+ //        // USART_Transmit(0x02);
+ //        // USART_Transmit(0x03);  
+ //        // USART_Transmit(0x04);
+ //        // USART_Transmit(0x05);
+ //        // USART_Transmit(0x06);
+ //        // USART_Transmit(0x07);
+ //        // USART_Transmit(0x08);
+ //        // USART_Transmit(0x09);
+ //        // USART_Transmit(0x0A);
+ //        // USART_Transmit(0x0B);
+ //        // USART_Transmit(0x0C);
+ //        // USART_Transmit(0x0D);  
+ //        // USART_Transmit(0x0E);
+ //        // USART_Transmit(0x0F);
+ //        // USART_Transmit(0x27);
+ //        // USART_Transmit('H');
+ //        // USART_Transmit('E');
+ //        // USART_Transmit('L');
+ //        // USART_Transmit('L');
+ //        // USART_Transmit('O');
+ //        // USART_Transmit(' ');
+ //        // USART_Transmit('W');
+ //        // USART_Transmit('O');
+ //        // USART_Transmit('R');
+ //        // USART_Transmit('L');
+ //        // USART_Transmit('D');
+ //        PORTB &= ~(1 << PB7);
+ // //       unsigned char result = USART_Receive();
+ //        _delay_ms(200);        
+ //    }
+
+    /*==========  Test USART 02 ==========*/        // Always bugguy for values upper than 0x1F
+
+    // USART_Init();
+    // DDRB |= (1 << PB7);
+
+    // unsigned char value = 0;
+    // while(true)
+    // {
+    //     // Serial transmission
+    //     PORTB |= (1 << PB7);
+    //     _delay_ms(300);   
+    //     USART_Transmit(value);
+    //     PORTB &= ~(1 << PB7);
+    //     value = USART_Receive();
+    //     _delay_ms(700);        
+    // }    
+
+    /*==========  Test USART 03 ==========*/        // It fucking works!
+
+    // Serial.begin(115200);
+    // DDRB |= (1 << PB7);
+
+    // unsigned char value = 0;
+    // while(true)
+    // { 
+    //    if(value++ > 0xFF)
+    //     value=0;  
+    //     // Serial transmission
+    //     PORTB |= (1 << PB7);
+    //     _delay_ms(300);   
+    //     Serial.write('H');
+    //     Serial.write('e');
+    //     Serial.write('l');
+    //     Serial.write('l');
+    //     Serial.write('o');
+    //     Serial.write(' ');
+    //     Serial.write('w');
+    //     Serial.write('o');
+    //     Serial.write('r');
+    //     Serial.write('l');
+    //     Serial.write('d');
+    //     Serial.write('!');
+    //     Serial.write('\n');
+    //     Serial.write('\r');
+    //     PORTB &= ~(1 << PB7);
+    //     _delay_ms(700);        
+    // }
+
+    /*==========  Test USART 03 ==========*/        // It fucking works!
+
+    Serial.begin(115200);
     DDRB |= (1 << PB7);
 
+    unsigned char cpt = 0;
     while(true)
-    {
+    { 
+        if(cpt++ > 0xFF)
+            cpt=0;  
         // Serial transmission
         PORTB |= (1 << PB7);
-        USART_Transmit(0x27);
+        _delay_ms(100);   
+
+        signed long int value;
+        // switch(cpt%4) {
+        //     case 0:
+        //         value = encMesL.getCount();
+        //         break;    
+        //     case 1:
+        //         value = encMesR.getCount();
+        //         break;   
+        //     case 2:
+        //         value = encMotL.getCount();
+        //         break;   
+        //     case 3:
+        //         value = encMotR.getCount();
+        //         break;       
+        // }
+        value = encMesL.getCount();
+
+        // Serial.write((cpt%4)+'0');
+        // Serial.write(':');
+        // Serial.write(' ');
+        printValue(value);
+        Serial.write('\n');
+        Serial.write('\r');
+        printValue(encMesL._cptRisingA);
+        Serial.write('\n');
+        Serial.write('\r');
+        printValue(encMesL._cptFallingA);
+        Serial.write('\n');
+        Serial.write('\r');
+        printValue(encMesL._cptRisingB);
+        Serial.write('\n');
+        Serial.write('\r');
+        printValue(encMesL._cptFallingB);
+        Serial.write('\n');
+        Serial.write('\r');
+        printValue(encMesL._tot);
+        Serial.write('\n');
+        Serial.write('\r');
+        Serial.write('-');
+        Serial.write('-');
+        Serial.write('-');
+        Serial.write('-');
+        Serial.write('\n');
+        Serial.write('\r');
+
+        // Serial.write('\n');
+        Serial.write('\r');
         PORTB &= ~(1 << PB7);
- //       unsigned char result = USART_Receive();
-        _delay_ms(1000);        
+        _delay_ms(300);        
     }
-    
 
   return 1;
+}
+
+void printValue(signed long int value)
+{
+        Serial.write(((value/100000000000)%10)+'0');
+        Serial.write(((value/10000000000)%10)+'0');
+        Serial.write(((value/1000000000)%10)+'0');
+        Serial.write(' ');
+        Serial.write(((value/100000000)%10)+'0');
+        Serial.write(((value/10000000)%10)+'0');
+        Serial.write(((value/1000000)%10)+'0');
+        Serial.write(' ');
+        Serial.write(((value/100000)%10)+'0');
+        Serial.write(((value/10000)%10)+'0');
+        Serial.write(((value/1000)%10)+'0');
+        Serial.write(' ');
+        Serial.write(((value/100)%10)+'0');
+        Serial.write(((value/10)%10)+'0');
+        Serial.write(((value/1)%10)+'0');    
 }

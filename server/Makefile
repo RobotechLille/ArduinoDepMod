@@ -25,14 +25,8 @@ rm 				= rm -f
 # Compiler
 CXX      = avr-g++
 
-# Compiling flags here
-override CFLAGS   = -g $(WARNINGS) $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFINES)
-
 # Linker
 LINKER   = $(CXX) -o
-
-# Linking flags here
-override LDFLAGS   = -Wl,-Map,$(BINDIR)/$(TARGET).map -mmcu=$(MCU_TARGET) 
 
 # Object tools
 OBJCOPY        = avr-objcopy
@@ -54,6 +48,12 @@ OBJECTS  := $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 # DEPFLAGS = -g $(WARNINGS) $(OPTIMIZE) $(DEFINES)
 # MAKEDEPEND = gcc -M $(DEPFLAGS) -o $(<:$(SRCDIR)/%.cpp=$(OBJDIR)/%.depend) $<
 MAKEDEPEND = /usr/bin/makedepend
+
+# Compiling flags here
+override CFLAGS   = -g $(WARNINGS) $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFINES) -I$(INCDIR)
+
+# Linking flags here
+override LDFLAGS   = -Wl,-Map,$(BINDIR)/$(TARGET).map -mmcu=$(MCU_TARGET) 
 
 # ------------------------------------------------------------
 ### Rules

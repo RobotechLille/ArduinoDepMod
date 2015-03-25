@@ -43,13 +43,15 @@ int main (void)
 	char data[1];
 	
 	// Init
-	dev = init_serial("/dev/ttyACM0",115200);
+	dev = init_serial("/dev/ttyACM2",115200);
 	
 	while(1) 
 	{
 		size = read(dev, data, 1);
-		printf("Data -> %x - %c -- Size %d\n",data[0],data[0],size);
-		data[0] = 0;
+		printf("Data -> %x - %x - %c -- Size %d\n",data[0]&0x7F,data[0]&0xFF,data[0],size);
+		// data[0] = 0;
+		data[0]&=0x7F;
+		data[0]++;
 		write(dev, data, 1);
 	}
 	
@@ -58,4 +60,3 @@ int main (void)
 	
 	return 0;	
 }
-	
